@@ -17,7 +17,7 @@ Run "./create-pfmain.sh" to create a new pfmain.vim file in the current
 directory. Run "./create-pfmaster.sh" for the pfmaster.vim file.
 
 # Copy files
-Put both vim-files into $USER/.vim/syntax (create the directory, if it does not
+Put both vim-files into $HOME/.vim/syntax (create the directory, if it does not
 yet exist).
 
 # Adding a  modeline
