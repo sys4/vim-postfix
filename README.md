@@ -8,7 +8,7 @@ You need to configure three variables in each of the two scripts before they
 are able to create syntax files.
 
 ```
-#!/bin/bash                                                                                                                                                                                        
+#!/bin/bash
 
 CAT=/bin/bzcat
 POSTCONF1=/usr/share/man/man1/postconf.1.bz2
