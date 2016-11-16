@@ -2,31 +2,18 @@
 The scripts provided in this repository will create vim syntax files for
 Postfix.
 
-<<<<<<< HEAD
-# Configuration
-Edit both create-scripts and adopt the first two variables to your needs.
-=======
-
 # Create syntax files
-You need to configure three variables in each of the two scripts before they
+You need to configure two variables in each of the two scripts before they
 are able to create syntax files.
->>>>>>> 229ddf01f69fe2b918c43d70145b309a18f8b003
 
 ```
 #!/bin/bash
 
-CAT=/bin/bzcat
 POSTCONF1=/usr/share/man/man1/postconf.1.bz2
 POSTCONF5=/usr/share/man/man5/postconf.5.bz2
 
 ###############################################################################
 ```
-
-The "CAT" variable should match the "POSTCONF1" and "POSTCONF5" suffix:
-
-    - Set "CAT" to "/bin/cat", if man pages are plain files.
-    - Set "CAT" to "/bin/zcat" if man pages are gzip compressed.
-    - Set "CAT" to "/bin/bzcat" if man pages are bzip2 compressed.
 
 The paths in `POSTCONF1` and `POSTCONF5` need to match the absolute path to
 their corresponding man pages.
