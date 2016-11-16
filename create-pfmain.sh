@@ -1,6 +1,5 @@
 #!/bin/bash
 
-CAT=/bin/bzcat
 POSTCONF1=/usr/share/man/man1/postconf.1.bz2
 POSTCONF5=/usr/share/man/man5/postconf.5.bz2
 
@@ -9,9 +8,30 @@ POSTCONF5=/usr/share/man/man5/postconf.5.bz2
 TEMP=/tmp/$(basename $0)-pfmain-$$
 trap -- "rm -f ${TEMP}" EXIT
 
-[[ -x ${CAT} ]] || exit 1
-[[ -f ${POSTCONF1} ]] || exit 1
-[[ -f ${POSTCONF5} ]] || exit 1
+function error() {
+	echo "${1}"
+	exit 1
+}
+
+[[ -f ${POSTCONF1} ]] || error "'postconf(1)' not found"
+[[ -f ${POSTCONF5} ]] || error "'postconf(5)' not found"
+
+FILETYPE=$(file -b ${POSTCONF1} | cut -d " " -f 1)
+case "${FILETYPE}" in
+	gzip)
+		CAT=$(which zcat)
+		;;
+	bzip2)
+		CAT=$(which bzcat)
+		;;
+	*)
+		CAT=$(which cat)
+		;;
+esac
+[[ -x "${CAT}" ]] || error "'cat', 'zcat' or 'bzcat'  not found"
+
+AWK=$(which gawk)
+[[ -x "${AWK}" ]] || error "'gawk' not found"
 
 cat > ${TEMP} << EOB
 " Vim syntax file
@@ -39,30 +59,30 @@ syntax sync minlines=1
 EOB
 
 ${CAT} ${POSTCONF5} | \
-	awk '/^\.SH ([a-z0-9_]+).+/ { print "syntax keyword pfmainConf "$2 }' \
+	${AWK} '/^\.SH ([a-z0-9_]+).+/ { print "syntax keyword pfmainConf "$2 }' \
 	>> ${TEMP}
 
 ${CAT} ${POSTCONF5}| \
-	awk 'match($0, /\\fItransport\\fR(_[a-z_]+) /, a) { print "syntax match pfmainConf \""a[1]"\\>\"" }' \
+	${AWK} 'match($0, /\\fItransport\\fR(_[a-z_]+) /, a) { print "syntax match pfmainConf \""a[1]"\\>\"" }' \
 	>> ${TEMP}
 
 echo >> ${TEMP}
 
 ${CAT} ${POSTCONF5} | \
-	awk '/^\.SH ([a-z0-9_]+).+/ { print "syntax match pfmainRef \"$\\<"$2"\\>\"" }' \
+	${AWK} '/^\.SH ([a-z0-9_]+).+/ { print "syntax match pfmainRef \"$\\<"$2"\\>\"" }' \
 	>> ${TEMP}
 
 echo >> ${TEMP}
 
 ${CAT} ${POSTCONF5} | \
-	awk 'match($0, /^\.IP \"\\fB([a-z0-9_]+) ?\\f[RI]/, a) { print "syntax keyword pfmainWord "a[1] }' \
+	${AWK} 'match($0, /^\.IP \"\\fB([a-z0-9_]+) ?\\f[RI]/, a) { print "syntax keyword pfmainWord "a[1] }' \
 	>> ${TEMP}
 
 echo >> ${TEMP}
 
 function paragraph() {
 	${CAT} ${POSTCONF1} | \
-		awk -v text="$3" 'BEGIN { s = 0 } {
+		${AWK} -v text="$3" 'BEGIN { s = 0 } {
 			if (s == 0) {
 				if ($0 ~ /\.IP \\fB\\\'"${1}"'\\fR/) { 
 					s = 1;
@@ -159,6 +179,6 @@ let b:current_syntax = "pfmain"
 " vim: ts=8 sw=2
 EOB
 
-awk '/^([[:blank:]]*|.*if .*|.*else(if| )?.*|.*endif.*)$/ { print; next; }; !seen[$0]++' ${TEMP} > pfmain.vim
+${AWK} '/^([[:blank:]]*|.*if .*|.*else(if| )?.*|.*endif.*)$/ { print; next; }; !seen[$0]++' ${TEMP} > pfmain.vim
 
 exit 0

@@ -2,12 +2,7 @@
 vim Syntax Highlighting for Postfix
 
 # Configuration
-Edit both create-scripts and adopt the first three variables to your needs. The
-"CAT" variable should match the "POSTCONF1" and "POSTCONF5" suffix.
-
-- Set "CAT" to "/bin/cat", if man pages are plain files.
-- Set "CAT" to "/bin/zcat" if man pages are gzip compressed.
-- Set "CAT" to "/bin/bzcat" if man pages are bzip2 compressed.
+Edit both create-scripts and adopt the first two variables to your needs.
 
 - "POSTCONF1" should match the absolute path for the man page postconf(1)
 - "POSTCONF5" should match the absolute path for the man page postconf(5)
